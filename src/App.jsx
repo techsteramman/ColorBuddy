@@ -44,8 +44,13 @@ const ColorAnalysis = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 
-    if (file && allowedTypes.includes(file.type)) {
+    if (
+      file &&
+      allowedTypes.includes(file.type) &&
+      file.size <= maxSizeInBytes
+    ) {
       const reader = new FileReader();
       reader.onload = () => {
         const mimeType = file.type;
@@ -54,7 +59,9 @@ const ColorAnalysis = () => {
       };
       reader.readAsDataURL(file);
     } else {
-      alert("Please upload a valid image file (JPEG, PNG, GIF, or WebP).");
+      alert(
+        "Please upload a valid image file (JPEG, PNG, GIF, or WebP) under 5 MB.",
+      );
     }
   };
 
