@@ -10,13 +10,6 @@ import {
 import { styled } from "@mui/system";
 import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import mixpanel from "mixpanel-browser";
-
-mixpanel.init("3df2079cafe0ab6c5c5b3a1545cb9a24", {
-  debug: true,
-  track_pageview: true,
-  persistence: "localStorage",
-});
 
 const theme = createTheme({
   typography: {
@@ -87,9 +80,6 @@ const ColorAnalysis = () => {
       setAnalysisResult(text);
       setApiError(null);
       scrollToResult();
-      mixpanel.track("Color Analysis Generated", {
-        result: text,
-      });
     } catch (error) {
       console.error("Error:", error);
       setApiError(error.message);
