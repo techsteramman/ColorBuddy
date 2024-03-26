@@ -74,26 +74,40 @@ const ColorAnalysis = () => {
 
   const sendImageToAPI = async (base64Image, mimeType) => {
     setIsLoading(true);
-    try {
-      const response = await axios.post(
-        "https://fnna5xesrb.execute-api.ap-northeast-1.amazonaws.com/prod/processing",
-        {
-          image: base64Image.split(",")[1],
-          media_type: mimeType,
-        },
-      );
-      const text = response.data.text;
-      console.log("Received text from API:", text);
-      setAnalysisResult(text);
-      setApiError(null);
-      scrollToResult();
-      mixpanel.track("Analysis Generated", {
-        result: text,
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      setApiError(error.message);
+    let retryCount = 0;
+    const maxRetries = 3; // Maximum number of retries
+
+    while (retryCount < maxRetries) {
+      try {
+        const response = await axios.post(
+          "https://fnna5xesrb.execute-api.ap-northeast-1.amazonaws.com/prod/processing",
+          {
+            image: base64Image.split(",")[1],
+            media_type: mimeType,
+          },
+        );
+        const text = response.data.text;
+        console.log("Received text from API:", text);
+        setAnalysisResult(text);
+        setApiError(null);
+        scrollToResult();
+        mixpanel.track("Analysis Generated", {
+          result: text,
+        });
+        setIsLoading(false);
+        return; // Exit the function if request succeeds
+      } catch (error) {
+        console.error("Error:", error);
+        if (error.response && error.response.status === 504) {
+          retryCount++;
+          console.log(`Retry attempt ${retryCount} out of ${maxRetries}`);
+          continue; // Retry if the error is 504
+        }
+        setApiError(error.message);
+        break; // Exit the loop for other errors
+      }
     }
+
     setIsLoading(false);
   };
 
