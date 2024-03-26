@@ -12,7 +12,7 @@ import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import mixpanel from "mixpanel-browser";
 
-mixpanel.init("3df2079cafe0ab6c5c5b3a1545cb9a24", {
+mixpanel.init("e56baed3292fc9437b61092824db42ee", {
   debug: true,
   track_pageview: true,
   persistence: "localStorage",
@@ -87,7 +87,7 @@ const ColorAnalysis = () => {
       setAnalysisResult(text);
       setApiError(null);
       scrollToResult();
-      mixpanel.track("Color Analysis Generated", {
+      mixpanel.track("Analysis Generated", {
         result: text,
       });
     } catch (error) {
